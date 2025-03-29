@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Document Simplifier</title>
+    <style>
+        :root {
+        --dark-color: #000000;
+        --light-color: #F4F1EC;
+        --darkblue-color: #131E3D;
+        --darkpuple-color: #222344;
+        --lightskin-color: #CDAD7D;
+        --libre-font: 'Libre Baskerville', serif;
+        --inter-font: 'Inter', sans-serif;
+}
+        body {
+            font-family: var(--inter-font);
+            background: var(--darkblue-color);
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .container {
+            background-color: var(--lightskin-color);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: var(--darkblue-color);
+            text-align: center;
+        }
+
+        .form-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: var(--light-color);
+        }
+
+        .form-section h2 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: var(--darkblue-color);
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid var(--light-color);
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        select,
+        button,
+        input[type="text"] {
+            padding: 10px;
+            margin: 5px 0;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        input[type="file"] {
+            margin: 10px 0;
+        }
+
+        button {
+            background-color: var(--darkblue-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--darkpuple-color);
+        }
+
+        #loading {
+            display: none;
+            font-weight: bold;
+            color: var(--dark-color);
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        #downloadLink {
+            display: none;
+            margin-top: 15px;
+            text-align: center;
+            padding: 10px;
+            background-color: var(--darkpuple-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .or-divider {
+            text-align: center;
+            margin: 15px 0;
+            color: var(--darkblue-color);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .process-button {
+            background-color: var(--darkblue-color);
+            flex: 2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Legal Document Simplifier</h1>
+
+        <form id="simplifyForm">
+            <div class="form-section">
+                <h2>Enter Text</h2>
+                <textarea id="text" name="text" placeholder="Enter legal text here to simplify..."></textarea>
+            </div>
+
+            <div class="or-divider">- OR -</div>
+
+            <div class="form-section">
+                <h2>Upload Document</h2>
+                <label for="file">Upload a .docx or .pdf file:</label><br>
+                <input type="file" id="file" name="file" accept=".docx,.pdf">
+            </div>
+
+            <div class="form-section">
+                <h2>Translation Options</h2>
+                <label for="language">Translate simplified text to:</label>
+                <select id="language" name="target_lang">
+                    <option value="">No Translation</option>
+                    <!-- Languages will be loaded dynamically -->
+                </select>
+            </div>
+
+            <button type="submit" class="process-button">Process Document</button>
+        </form>
+
+        <p id="loading">Processing your request... Please wait.</p>
+        <a id="downloadLink" download="simplified_document.docx">Download Simplified Document</a>
+    </div>
+
+    <script>
+        
+        // Fetch supported languages on page load
+        document.addEventListener('DOMContentLoaded', fetchLanguages);
+        
+        async function fetchLanguages() {
+            try {
+                const response = await fetch("/api/languages");
+                if (response.ok) {
+                    const languages = await response.json();
+                    const languageSelect = document.getElementById("language");
+
+                    // Clear existing options except the first one
+                    while (languageSelect.options.length > 1) {
+                        languageSelect.remove(1);
+                    }
+
+                    // Add languages from API
+                    Object.entries(languages).forEach(([code, name]) => {
+                        const option = document.createElement("option");
+                        option.value = code;
+                        option.textContent = name;
+                        languageSelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error("Failed to fetch languages:", error);
+            }
+        }
+
+        // Handle the main form submission
+        document.getElementById("simplifyForm").addEventListener("submit", async function (event) {
+                event.preventDefault(); // Prevent page refresh
+
+                console.log("Form submission started...");  // Debugging
+
+                // Show loading indicator
+                document.getElementById("loading").style.display = "block";
+                setTimeout(() => { document.getElementById("loading").style.display = "block"; }, 10);
+
+                let formData = new FormData();
+                let text = document.getElementById("text").value;
+                let fileInput = document.getElementById("file").files[0];
+                let language = document.getElementById("language").value;
+
+                if (!fileInput && !text.trim()) {
+                    alert("Please enter text, upload a file, or provide a search query.");
+                    document.getElementById("loading").style.display = "none"; // Hide again
+                    return;
+                }
+
+                if (text.trim()) formData.append("text", text);
+                if (fileInput) formData.append("file", fileInput);
+                if (language) formData.append("target_lang", language);
+
+                try {
+                    let response = await fetch("/api/simplify", { method: "POST", body: formData });
+
+                    if (!response.ok) throw new Error("Error processing request.");
+
+                    let blob = await response.blob();
+                    let downloadUrl = URL.createObjectURL(blob);
+                    let downloadLink = document.getElementById("downloadLink");
+                    downloadLink.href = downloadUrl;
+                    downloadLink.style.display = "block";
+                } catch (error) {
+                    alert(error.message || "Failed to process the document.");
+                } finally {
+                    document.getElementById("loading").style.display = "none"; // Hide loading
+                }
+            });
+    </script>
+</body>
+
+</html>
