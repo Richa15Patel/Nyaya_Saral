@@ -1,0 +1,15 @@
+Flask                         
+huggingface_hub
+python-dotenv
+torch
+transformers
+python-docx
+pymupdf  
+pytesseract
+Pillow
+werkzeug
+requests
+IndicTransToolkit
+json
+threading
+sentencepiece
