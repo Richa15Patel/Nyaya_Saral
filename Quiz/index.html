@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Website</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Language Selector with only four languages -->
+    <div class="language-container">
+        <select id="languageSelect" class="language-selector">
+            <option value="en">English</option>
+            <option value="hi">हिन्दी</option>
+            <option value="ta">தமிழ்</option>
+            <option value="bn">বাংলা</option>
+        </select>
+    </div>
+
+    <main class="main">
+        <div class="container">
+            <section class="quiz-section">
+                <div class="quiz-box">
+                    <div class="quiz-header">
+                        <span data-translate="welcome" style="color: white;">Welcome to Quiz</span>
+                        <span class="header-score" data-translate="score">Score: 0 / 5</span>
+                    </div>
+
+                    <h2 class="question-text" data-translate="questionText"></h2>
+
+                    <div class="option-list"></div> 
+
+                    <div class="quiz-footer">
+                        <span class="question-total"></span>
+                        <button class="next-btn" data-translate="next">Next</button>
+                    </div>
+                </div>
+
+                <div class="result-box">
+                    <h2 data-translate="quizResult">Quiz Result!</h2>
+                    <div class="percentage-container">
+                        <div class="circular-progress">
+                            <span class="progress-value">0%</span>
+                        </div>
+                        <span class="score-text" data-translate="yourScore">Your Score 0 out of 5</span>
+                    </div>
+                    <div class="buttons">
+                        <button class="tryAgain-btn" data-translate="tryAgain">Try Again</button>
+                        <button class="goHome-btn" data-translate="goHome">Go To Home</button>
+                    </div>
+                </div>
+            </section>
+            <section class="home">
+                <div class="home-content">
+                    <h1 data-translate="quizTitle">Quiz</h1>
+                    <p data-translate="welcomeText">Welcome to the Quiz. After starting quiz you will get a quiz guide.</p>
+                    <button class="start-btn" data-translate="startQuiz">Start Quiz</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div class="popup-info">
+        <h2 data-translate="quizGuide">Quiz Guide</h2>
+        <span class="info" data-translate="guide1">1. You cannot skip any questions.</span>
+        <span class="info" data-translate="guide2">2. Once you attempt any question, you cannot go to the previous question.</span>
+        <span class="info" data-translate="guide3">3. After one answer is selected, other options will be disabled.</span>
+        <span class="info" data-translate="guide4">4. You will be given a total of 5 questions.</span>
+        <span class="info" data-translate="guide5">5. Concentrate on your Quiz, Don't try to cheat.</span>
+
+        <div class="btn-group">
+            <button class="info-btn exit-btn" data-translate="exitQuiz">Exit Quiz</button>
+            <a href="#" class="info-btn continue-btn" data-translate="continue">Continue</a>
+        </div>
+    </div>
+
+    <!-- Added the Transformers.js script for translations -->
+    <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.14.0"></script>
+    <script src="script.js"></script>
+    <script src="questions.js"></script>
+    <script src="translations.js"></script>
+
+
+
+</body>
+</html>
